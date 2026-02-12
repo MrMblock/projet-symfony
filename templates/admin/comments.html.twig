@@ -1,0 +1,62 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Moderation des commentaires - Mon Blog{% endblock %}
+
+{% block body %}
+    <h1 class="mb-4">Moderation des commentaires</h1>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Auteur</th>
+                <th>Article</th>
+                <th>Commentaire</th>
+                <th>Statut</th>
+                <th>Date</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for comment in comments %}
+                <tr class="{{ comment.id in unreadIds ? 'table-info fw-bold' : (comment.status == 'en attente' ? 'table-warning' : '') }}">
+                    <td>
+                        {{ comment.id }}
+                        {% if comment.id in unreadIds %}
+                            <span class="badge bg-primary ms-1">Non lu</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ comment.author.firstName }} {{ comment.author.lastName }}</td>
+                    <td><a href="{{ path('app_post_show', {slug: comment.post.slug}) }}">{{ comment.post.title|slice(0, 30) }}</a></td>
+                    <td>{{ comment.content|slice(0, 50) }}...</td>
+                    <td>
+                        {% if comment.status == 'en attente' %}
+                            <span class="badge bg-warning text-dark">En attente</span>
+                        {% elseif comment.status == 'valide' %}
+                            <span class="badge bg-success">Valide</span>
+                        {% else %}
+                            <span class="badge bg-danger">Supprime</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ comment.createdAt|date('d/m/Y H:i') }}</td>
+                    <td>
+                        {% if comment.status != 'valide' %}
+                            <form action="{{ path('app_admin_comment_approve', {id: comment.id}) }}" method="post" class="d-inline">
+                                <input type="hidden" name="_token" value="{{ csrf_token('approve' ~ comment.id) }}">
+                                <button class="btn btn-sm btn-success">Approuver</button>
+                            </form>
+                        {% endif %}
+                        {% if comment.status != 'supprime' %}
+                            <form action="{{ path('app_admin_comment_reject', {id: comment.id}) }}" method="post" class="d-inline">
+                                <input type="hidden" name="_token" value="{{ csrf_token('reject' ~ comment.id) }}">
+                                <button class="btn btn-sm btn-danger">Rejeter</button>
+                            </form>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_admin_dashboard') }}" class="btn btn-secondary">Retour</a>
+{% endblock %}

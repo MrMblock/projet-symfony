@@ -1,0 +1,51 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Gestion des utilisateurs - Mon Blog{% endblock %}
+
+{% block body %}
+    <h1 class="mb-4">Gestion des utilisateurs</h1>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nom</th>
+                <th>Email</th>
+                <th>Roles</th>
+                <th>Inscrit le</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+                <tr>
+                    <td>{{ user.id }}</td>
+                    <td>{{ user.firstName }} {{ user.lastName }}</td>
+                    <td>{{ user.email }}</td>
+                    <td>
+                        {% for role in user.roles %}
+                            <span class="badge {{ role == 'ROLE_ADMIN' ? 'bg-danger' : 'bg-primary' }}">{{ role == 'ROLE_ADMIN' ? 'Admin' : 'Utilisateur' }}</span>
+                        {% endfor %}
+                    </td>
+                    <td>{{ user.createdAt|date('d/m/Y') }}</td>
+                    <td>
+                        {% if user.id != app.user.id %}
+                            <form action="{{ path('app_admin_user_toggle', {id: user.id}) }}" method="post" class="d-inline">
+                                <input type="hidden" name="_token" value="{{ csrf_token('toggle' ~ user.id) }}">
+                                {% if 'ROLE_ADMIN' in user.roles %}
+                                    <button class="btn btn-sm btn-outline-warning" onclick="return confirm('Retirer le role admin ?')">Retirer admin</button>
+                                {% else %}
+                                    <button class="btn btn-sm btn-outline-success" onclick="return confirm('Donner le role admin ?')">Rendre admin</button>
+                                {% endif %}
+                            </form>
+                        {% else %}
+                            <span class="text-muted">Vous</span>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_admin_dashboard') }}" class="btn btn-secondary">Retour</a>
+{% endblock %}

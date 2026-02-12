@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nouvel article - Gabriel.dev{% endblock %}
+
+{% block body %}
+    <h1>Nouvel article</h1>
+
+    {{ form_start(form, {'attr': {'class': 'mt-3'}}) }}
+        {{ form_widget(form) }}
+        <button type="submit" class="btn btn-primary mt-3">Publier</button>
+        <a href="{{ path('app_post_index') }}" class="btn btn-secondary mt-3">Annuler</a>
+    {{ form_end(form) }}
+{% endblock %}

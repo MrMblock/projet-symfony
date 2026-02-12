@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}A propos du projet - Gabriel.dev{% endblock %}
+
+{% block body %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <div class="markdown-body">
+                        {# Simple rendering, replacing newlines with breaks for basic display #}
+                        {{ content|nl2br }}
+                    </div>
+                </div>
+                <div class="card-footer text-center">
+                    <a href="{{ path('app_home') }}" class="btn btn-primary">Retour a l'accueil</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

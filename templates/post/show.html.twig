@@ -1,0 +1,168 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+	{{ post.title }}
+	- Gabriel.dev
+{% endblock %}
+
+{% block body %}
+	<nav aria-label="breadcrumb" class="mb-4">
+		<ol class="breadcrumb">
+			<li class="breadcrumb-item">
+				<a href="{{ path('app_home') }}">Accueil</a>
+			</li>
+			<li class="breadcrumb-item">
+				<a href="{{ path('app_post_index') }}">Articles</a>
+			</li>
+			<li class="breadcrumb-item active">{{ post.title }}</li>
+		</ol>
+	</nav>
+
+	<article>
+		{% if post.picture %}
+			<img src="{{ post.picture }}" class="img-fluid rounded mb-4 w-100" alt="{{ post.title }}" style="max-height: 400px; object-fit: cover;">
+		{% endif %}
+
+		<div class="d-flex justify-content-between align-items-start mb-3">
+			<div>
+				<h1>{{ post.title }}</h1>
+				<div class="d-flex align-items-center text-muted mb-2">
+					<a href="{{ path('app_user_show', {slug: post.author.slug}) }}" class="d-flex align-items-center text-decoration-none text-muted">
+						{% if post.author.profilePicture %}
+							<img src="{{ asset('uploads/profiles/' ~ post.author.profilePicture) }}" alt="{{ post.author.firstName }}" class="rounded-circle me-2" style="width: 35px; height: 35px; object-fit: cover;">
+						{% endif %}
+						<span>
+							Par
+							<strong>{{ post.author.firstName }}
+								{{ post.author.lastName }}</strong>
+						</span>
+					</a>
+						<small class="text-muted ms-2">
+							Publie le
+							{{ post.publishedAt|date('d/m/Y') }}
+							| Vues : {{ post.views }}
+							| Categorie :
+							<span class="badge bg-secondary">{{ post.category.name }}</span>
+						</small>
+				</div>
+			</div>
+			{% if is_granted('ROLE_ADMIN') %}
+				<div class="btn-group">
+					<a href="{{ path('app_post_edit', {slug: post.slug}) }}" class="btn btn-sm btn-warning">Modifier</a>
+					<form action="{{ path('app_post_delete', {slug: post.slug}) }}" method="post" class="d-inline" onsubmit="return confirm('Supprimer cet article ?')">
+						<input type="hidden" name="_token" value="{{ csrf_token('delete' ~ post.id) }}">
+						<button class="btn btn-sm btn-danger">Supprimer</button>
+					</form>
+				</div>
+			{% endif %}
+		</div>
+
+		<div class="mb-5">
+			{{ post.content|raw }}
+		</div>
+
+		<div class="mb-5">
+			<h5>Partager cet article :</h5>
+			<div class="btn-group" role="group">
+				<a href="https://twitter.com/intent/tweet?text={{ post.title }}&url={{ url('app_post_show', {slug: post.slug}) }}" target="_blank" class="btn btn-outline-primary">
+					Twitter
+				</a>
+				<a href="https://www.facebook.com/sharer/sharer.php?u={{ url('app_post_show', {slug: post.slug}) }}" target="_blank" class="btn btn-outline-primary">
+					Facebook
+				</a>
+				<a href="https://www.linkedin.com/sharing/share-offsite/?url={{ url('app_post_show', {slug: post.slug}) }}" target="_blank" class="btn btn-outline-primary">
+					LinkedIn
+				</a>
+			</div>
+		</div>
+
+		{% if is_granted('ROLE_USER') %}
+			<div class="mb-4">
+				<form action="{{ path('app_post_like', {slug: post.slug}) }}" method="post" class="d-inline">
+					<button type="submit" class="btn {{ app.user.hasLiked(post) ? 'btn-danger' : 'btn-outline-danger' }} d-flex align-items-center gap-2">
+						{% if app.user.hasLiked(post) %}
+							<i class="bi bi-heart-fill"></i>
+							Retirer des favoris
+						{% else %}
+							<i class="bi bi-heart"></i>
+							Ajouter aux favoris
+						{% endif %}
+						<span class="badge bg-white text-dark">{{ post.likedBy|length }}</span>
+					</button>
+				</form>
+			</div>
+		{% else %}
+			<div class="mb-4">
+				<span class="text-muted">
+					<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16">
+						<path fill-rule="evenodd" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z"/>
+					</svg>
+					{{ post.likedBy|length }} j'aime
+				</span>
+			</div>
+		{% endif %}
+	</article>
+
+	<hr>
+
+	<section class="mt-4">
+		<h3>Commentaires ({{ post.comments|length }})</h3>
+
+		{% for comment in post.comments %}
+			{% if comment.status == 'valide' or is_granted('ROLE_ADMIN') %}
+				<div class="card mb-3 {{ comment.status != 'valide' and is_granted('ROLE_ADMIN') ? 'border-warning opacity-75' : '' }}">
+					<div class="card-body">
+						<div class="d-flex justify-content-between align-items-start">
+							<div class="d-flex align-items-center">
+								{% if comment.author.profilePicture %}
+									<img src="{{ asset('uploads/profiles/' ~ comment.author.profilePicture) }}" alt="{{ comment.author.firstName }}" class="rounded-circle me-2" style="width: 35px; height: 35px; object-fit: cover;">
+								{% elseif comment.author.googleAvatar %}
+									<img src="{{ comment.author.googleAvatar }}" alt="{{ comment.author.firstName }}" class="rounded-circle me-2" style="width: 35px; height: 35px; object-fit: cover;">
+								{% else %}
+									<div class="bg-secondary rounded-circle d-inline-flex align-items-center justify-content-center me-2" style="width: 35px; height: 35px;">
+										<span class="text-white small">{{ comment.author.firstName|first }}{{ comment.author.lastName|first }}</span>
+									</div>
+								{% endif %}
+								<h6 class="card-subtitle mb-0 text-muted">
+									{{ comment.author.firstName }}
+									{{ comment.author.lastName }}
+									<small>-
+										{{ comment.createdAt|date('d/m/Y H:i') }}</small>
+							</h6>
+							</div>
+							{% if is_granted('ROLE_ADMIN') %}
+								{% if comment.status == 'en attente' %}
+									<span class="badge bg-warning text-dark">En attente</span>
+								{% elseif comment.status == 'valide' %}
+									<span class="badge bg-success">Valide</span>
+								{% elseif comment.status == 'supprime' %}
+									<span class="badge bg-danger">Supprime</span>
+								{% endif %}
+							{% endif %}
+						</div>
+						<p class="card-text mt-3 ms-1">{{ comment.content }}</p>
+					</div>
+				</div>
+			{% endif %}
+		{% else %}
+			<p class="text-muted">Aucun commentaire pour le moment.</p>
+		{% endfor %}
+
+		{% if is_granted('ROLE_USER') %}
+			<div class="card mt-4">
+				<div class="card-header">Ajouter un commentaire</div>
+				<div class="card-body">
+					{{ form_start(commentForm, {'attr': {'class': 'mt-2'}}) }}
+					{{ form_widget(commentForm) }}
+					<button type="submit" class="btn btn-primary mt-2">Commenter</button>
+					{{ form_end(commentForm) }}
+				</div>
+			</div>
+		{% else %}
+			<div class="alert alert-info mt-3">
+				<a href="{{ path('app_login') }}">Connectez-vous</a>
+				pour ajouter un commentaire.
+			</div>
+		{% endif %}
+	</section>
+{% endblock %}

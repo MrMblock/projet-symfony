@@ -1,0 +1,7 @@
+fos_ck_editor:
+    default_config: main
+    configs:
+        main:
+            toolbar: standard
+            height: 300
+            language: fr

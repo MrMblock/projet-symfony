@@ -1,0 +1,83 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon profil - Mon Blog{% endblock %}
+
+{% block body %}
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h3 class="mb-0">Mon profil</h3>
+                    <a href="{{ path('app_profile_edit') }}" class="btn btn-sm btn-warning">Modifier</a>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4 text-center">
+                            {% if app.user.profilePicture %}
+                                <img src="{{ asset('uploads/profiles/' ~ app.user.profilePicture) }}" alt="Photo de profil" class="rounded-circle img-fluid mb-3" style="width: 150px; height: 150px; object-fit: cover;">
+                            {% else %}
+                                <div class="bg-secondary rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 150px; height: 150px;">
+                                    <span class="text-white fs-1">{{ app.user.firstName|first }}{{ app.user.lastName|first }}</span>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-8">
+                            <table class="table">
+                                <tr>
+                                    <th>Prenom</th>
+                                    <td>{{ app.user.firstName }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Nom</th>
+                                    <td>{{ app.user.lastName }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Email</th>
+                                    <td>{{ app.user.email }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Inscrit le</th>
+                                    <td>{{ app.user.createdAt|date('d/m/Y') }}</td>
+                                </tr>
+                                {% if app.user.updatedAt %}
+                                    <tr>
+                                        <th>Derniere modification</th>
+                                        <td>{{ app.user.updatedAt|date('d/m/Y H:i') }}</td>
+                                    </tr>
+                                {% endif %}
+                                <tr>
+                                    <th>Roles</th>
+                                    <td>
+                                        {% for role in app.user.roles %}
+                                            <span class="badge {{ role == 'ROLE_ADMIN' ? 'bg-danger' : 'bg-primary' }}">{{ role == 'ROLE_ADMIN' ? 'Admin' : 'Utilisateur' }}</span>
+                                        {% endfor %}
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {% if app.user.likedPosts|length > 0 %}
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <h4 class="mb-0">Mes articles likes ({{ app.user.likedPosts|length }})</h4>
+                    </div>
+                    <ul class="list-group list-group-flush">
+                        {% for post in app.user.likedPosts %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    <a href="{{ path('app_post_show', {slug: post.slug}) }}" class="text-decoration-none fw-bold">{{ post.title }}</a>
+                                    <br>
+                                    <small class="text-muted">Par {{ post.author.firstName }} {{ post.author.lastName }} - {{ post.publishedAt|date('d/m/Y') }}</small>
+                                </div>
+                                <span class="badge bg-secondary">{{ post.category.name }}</span>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

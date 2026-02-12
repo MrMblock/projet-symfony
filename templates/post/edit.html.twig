@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier l'article - Gabriel.dev{% endblock %}
+
+{% block body %}
+    <h1>Modifier l'article</h1>
+
+    {{ form_start(form, {'attr': {'class': 'mt-3'}}) }}
+        {{ form_widget(form) }}
+        <button type="submit" class="btn btn-warning mt-3">Enregistrer</button>
+        <a href="{{ path('app_post_show', {slug: post.slug}) }}" class="btn btn-secondary mt-3">Annuler</a>
+    {{ form_end(form) }}
+{% endblock %}
