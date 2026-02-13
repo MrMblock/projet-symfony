@@ -85,4 +85,5 @@ Lancer les tests
 
 ## Créer un compte admin
 
-Rendez-vous dans votre SGBD et modifiez les rôles de l'utilisateur que vous voulez rendre admin en '["ROLE_ADMIN"]'# projet-symfony
+Rendez-vous dans votre SGBD et modifiez les rôles de l'utilisateur que vous voulez rendre admin en '["ROLE_ADMIN"]'
+# projet-symfony
