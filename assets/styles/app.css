@@ -790,3 +790,51 @@ footer {
         height: 44px;
     }
 }
+/* --- COPY CODE BUTTON --- */
+.code-wrapper {
+    position: relative;
+    margin-bottom: 1rem;
+}
+
+.code-wrapper pre {
+    margin-bottom: 0;
+}
+
+.btn-copy-code {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    background: rgba(255, 255, 255, 0.8);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+    color: var(--text-color);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.code-wrapper:hover .btn-copy-code {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+[data-theme="dark"] .btn-copy-code {
+    background: rgba(45, 45, 45, 0.8);
+    color: var(--text-color);
+    border-color: var(--border-color);
+}
+
+.btn-copy-code:hover {
+    background: var(--accent);
+    color: white;
+    border-color: var(--accent);
+}
+
+.btn-copy-code.copied {
+    background: #198754;
+    color: white;
+    border-color: #198754;
+}

@@ -37,13 +37,14 @@
 								{{ post.author.lastName }}</strong>
 						</span>
 					</a>
-						<small class="text-muted ms-2">
-							Publie le
-							{{ post.publishedAt|date('d/m/Y') }}
-							| Vues : {{ post.views }}
-							| Categorie :
-							<span class="badge bg-secondary">{{ post.category.name }}</span>
-						</small>
+					<small class="text-muted ms-2">
+						Publie le
+						{{ post.publishedAt|date('d/m/Y') }}
+						| Vues :
+						{{ post.views }}
+						| Categorie :
+						<span class="badge bg-secondary">{{ post.category.name }}</span>
+					</small>
 				</div>
 			</div>
 			{% if is_granted('ROLE_ADMIN') %}
@@ -77,8 +78,9 @@
 		</div>
 
 		{% if is_granted('ROLE_USER') %}
-			<div class="mb-4">
+			<div class="mb-4" id="post-like-{{ post.id }}">
 				<form action="{{ path('app_post_like', {slug: post.slug}) }}" method="post" class="d-inline">
+					<input type="hidden" name="token" value="{{ csrf_token('like' ~ post.id) }}">
 					<button type="submit" class="btn {{ app.user.hasLiked(post) ? 'btn-danger' : 'btn-outline-danger' }} d-flex align-items-center gap-2">
 						{% if app.user.hasLiked(post) %}
 							<i class="bi bi-heart-fill"></i>
@@ -94,10 +96,11 @@
 		{% else %}
 			<div class="mb-4">
 				<span class="text-muted">
-					<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16">
+					<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewbox="0 0 16 16">
 						<path fill-rule="evenodd" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z"/>
 					</svg>
-					{{ post.likedBy|length }} j'aime
+					{{ post.likedBy|length }}
+					j'aime
 				</span>
 			</div>
 		{% endif %}
@@ -128,7 +131,7 @@
 									{{ comment.author.lastName }}
 									<small>-
 										{{ comment.createdAt|date('d/m/Y H:i') }}</small>
-							</h6>
+								</h6>
 							</div>
 							{% if is_granted('ROLE_ADMIN') %}
 								{% if comment.status == 'en attente' %}

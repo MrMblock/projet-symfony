@@ -1,0 +1,10 @@
+{% extends 'home/docs_layout.html.twig' %}
+
+{% block title %}Documentation - Projet Symfony
+{% endblock %}
+
+{% block docs_content %}
+	<div class="card border-0 shadow-sm p-4 p-md-5" data-controller="copy-code">
+		{{ content|raw }}
+	</div>
+{% endblock %}

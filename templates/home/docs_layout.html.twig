@@ -1,0 +1,121 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+	{{ parent() }}
+	<style>
+		/* Docs Sidebar Styling */
+		.docs-sidebar {
+			position: sticky;
+			top: 5rem;
+			max-height: calc(100vh - 7rem);
+			overflow-y: auto;
+		}
+
+		.docs-sidebar .nav-link {
+			color: var(--bs-body-color);
+			padding: 0.25rem 0 0.25rem 0.75rem;
+			border-left: 2px solid transparent;
+			font-size: 0.95rem;
+		}
+
+		.docs-sidebar .nav-link:hover {
+			color: var(--bs-primary);
+			border-left-color: var(--bs-primary);
+		}
+
+		.docs-sidebar .nav-link.active {
+			color: var(--bs-primary);
+			border-left-color: var(--bs-primary);
+			font-weight: 600;
+		}
+
+		/* Nested Levels */
+		.docs-sidebar .nav-link.level-3 {
+			padding-left: 1.5rem;
+			font-size: 0.85rem;
+		}
+
+		/* Content Styling */
+		.docs-content h1 {
+			margin-top: 0;
+			margin-bottom: 1.5rem;
+			padding-bottom: 0.5rem;
+			border-bottom: 1px solid var(--bs-border-color);
+		}
+		.docs-content h2 {
+			margin-top: 2.5rem;
+			margin-bottom: 1rem;
+			padding-bottom: 0.3rem;
+			border-bottom: 1px solid var(--bs-border-color-subtle);
+		}
+		.docs-content h3 {
+			margin-top: 2rem;
+			margin-bottom: 0.75rem;
+		}
+
+		/* Code Blocks */
+		.docs-content pre {
+			background-color: #2d2d2d;
+			color: #f8f8f2;
+			padding: 1rem;
+			border-radius: 0.5rem;
+			margin-bottom: 1.5rem;
+		}
+
+		/* Callouts / Alerts */
+		.docs-content blockquote {
+			border-left: 4px solid var(--bs-primary);
+			padding: 1rem;
+			color: var(--bs-secondary-color);
+			margin: 1.5rem 0;
+			background-color: var(--bs-tertiary-bg);
+			border-radius: 0 0.5rem 0.5rem 0;
+		}
+
+		/* Heading Anchors */
+		.heading-permalink {
+			color: var(--bs-tertiary-color);
+			text-decoration: none;
+			margin-left: 0.5rem;
+			opacity: 0;
+			transition: opacity 0.2s;
+			font-size: 0.8em;
+		}
+
+		h1:hover .heading-permalink,
+		h2:hover .heading-permalink,
+		h3:hover .heading-permalink {
+			opacity: 1;
+		}
+	</style>
+{% endblock %}
+
+{% block body %}
+	<div class="container-fluid container-xl my-5">
+		<div
+			class="row">
+			<!-- Sidebar Navigation -->
+			<div class="col-lg-3 d-none d-lg-block">
+				<nav class="docs-sidebar">
+					<h5 class="mb-3 fw-bold">Sommaire</h5>
+					<ul class="nav flex-column">
+						{% for heading in headings %}
+							<li class="nav-item">
+								<a class="nav-link level-{{ heading.level }}" href="#{{ heading.id }}">
+									{{ heading.title }}
+								</a>
+							</li>
+						{% else %}
+							<li class="nav-item text-muted small">Aucune section détectée</li>
+						{% endfor %}
+					</ul>
+				</nav>
+			</div>
+
+			<!-- Main Content -->
+			<main class="col-lg-9 docs-content">
+				{% block docs_content %}{% endblock %}
+			</main>
+		</div>
+	</div>
+{% endblock %}

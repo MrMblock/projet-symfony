@@ -75,9 +75,13 @@ symfony serve
 Vider le cache (à faire souvent) :
 
 <pre>
-php bin/console cache:clear
+    php bin/console cache:clear
 </pre>
 
+Lancer les tests
+<pre>
+    php bin/phpunit
+</pre>
 
 ## Créer un compte admin
 

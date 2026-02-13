@@ -1,0 +1,14 @@
+<turbo-stream action="replace" target="post-like-{{ post.id }}">
+	<template>
+		<div id="post-like-{{ post.id }}">
+			<form action="{{ path('app_post_like', {slug: post.slug}) }}" method="post" class="d-inline">
+				<input type="hidden" name="token" value="{{ csrf_token('like' ~ post.id) }}">
+				<button class="btn {{ liked ? 'btn-danger' : 'btn-outline-danger' }}">
+					<i class="bi {{ liked ? 'bi-heart-fill' : 'bi-heart' }}"></i>
+					{{ post.getLikes|length }}
+					J'aime
+				</button>
+			</form>
+		</div>
+	</template>
+</turbo-stream>

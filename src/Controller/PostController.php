@@ -135,12 +135,19 @@ class PostController extends AbstractController
 
     #[Route('/{slug}/like', name: 'app_post_like', methods: ['POST'])]
     #[IsGranted('ROLE_USER')]
-    public function toggleLike(#[MapEntity(mapping: ['slug' => 'slug'])] Post $post, EntityManagerInterface $em): Response
+    public function toggleLike(#[MapEntity(mapping: ['slug' => 'slug'])] Post $post, EntityManagerInterface $em, Request $request): Response
     {
         /** @var \App\Entity\User $user */
         $user = $this->getUser();
         $liked = $user->toggleLike($post);
         $em->flush();
+
+        if ($request->getPreferredFormat() === 'turbo_stream') {
+            return $this->render('post/like_stream.html.twig', [
+                'post' => $post,
+                'liked' => $liked,
+            ]);
+        }
 
         $this->addFlash('success', $liked ? 'Article ajoute aux favoris.' : 'Article retire des favoris.');
 
